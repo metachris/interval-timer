@@ -525,13 +525,6 @@
       </div>
     </div>
 
-    <div class="presets" id="presets">
-      <button class="preset" data-min="1" data-max="3">React<span class="range">1–3s</span></button>
-      <button class="preset" data-min="3" data-max="8">Agility<span class="range">3–8s</span></button>
-      <button class="preset" data-min="5" data-max="15">Drill<span class="range">5–15s</span></button>
-      <button class="preset" data-min="15" data-max="45">Endur.<span class="range">15–45s</span></button>
-    </div>
-
     <div class="error-msg" id="error-msg">Min must be ≤ Max</div>
 
     <button class="start-btn" id="start-btn">Start</button>
@@ -693,7 +686,6 @@
     minValEl.textContent = minInterval;
     maxValEl.textContent = maxInterval;
     validateRange();
-    updatePresetHighlight();
   }
 
   function validateRange() {
@@ -703,14 +695,6 @@
       startBtn.disabled = !valid;
     }
     return valid;
-  }
-
-  function updatePresetHighlight() {
-    document.querySelectorAll('.preset').forEach(p => {
-      const m = parseInt(p.dataset.min, 10);
-      const x = parseInt(p.dataset.max, 10);
-      p.classList.toggle('active', m === minInterval && x === maxInterval);
-    });
   }
 
   function adjust(action) {
@@ -764,15 +748,6 @@
 
     btn.addEventListener('pointercancel', cleanup);
     btn.addEventListener('lostpointercapture', () => { if (pressed) cleanup(); });
-  });
-
-  document.querySelectorAll('.preset').forEach(p => {
-    p.addEventListener('click', () => {
-      minInterval = parseInt(p.dataset.min, 10);
-      maxInterval = parseInt(p.dataset.max, 10);
-      updateValues();
-      saveSettings();
-    });
   });
 
   // ====== Timer loop ======
