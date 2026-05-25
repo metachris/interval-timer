@@ -1,11 +1,11 @@
-const CACHE_NAME = 'interval-trainer-v1';
+const CACHE_NAME = 'interval-trainer-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/favicon.svg',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/manifest.webmanifest'
+  './',
+  './index.html',
+  './favicon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './manifest.webmanifest'
 ];
 
 self.addEventListener('install', e => {
