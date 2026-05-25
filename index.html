@@ -176,6 +176,20 @@
       text-align: center;
     }
 
+    .tap-hint {
+      position: absolute;
+      bottom: 8px;
+      right: 12px;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      opacity: 0.4;
+      font-weight: 500;
+      pointer-events: none;
+      z-index: 1;
+    }
+
     .countdown-area {
       padding: 6px 0;
       position: relative;
@@ -216,7 +230,8 @@
     .surprise .countdown,
     .surprise .display-label,
     .surprise .hint,
-    .surprise .stats {
+    .surprise .stats,
+    .surprise .tap-hint {
       visibility: hidden;
     }
 
@@ -391,6 +406,7 @@
       flex-direction: column;
       gap: 3px;
       align-items: center;
+      justify-content: center;
       line-height: 1.1;
       transition: all 0.1s;
       min-height: 52px;
@@ -550,6 +566,7 @@
           <div class="stat-value" id="last-interval">—</div>
         </div>
       </div>
+      <div class="tap-hint">Tap to hide</div>
     </div>
 
     <div class="controls">
