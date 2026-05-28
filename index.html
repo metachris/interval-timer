@@ -435,6 +435,13 @@
       opacity: 1;
     }
 
+    .preset.multi {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      box-shadow: inset 0 0 0 2px var(--bg);
+    }
+
     /* ====== Error ====== */
     .error-msg {
       color: var(--danger);
@@ -618,7 +625,7 @@
       let audioCtx = null;
       let wakeLock = null;
       let surprise = false;
-      let soundType = 'clap';
+      let selectedSounds = ['clap'];
 
       // ====== DOM ======
       const app = document.getElementById('app');
@@ -637,15 +644,23 @@
       const progressEl = document.getElementById('progress');
 
       // ====== Persistent storage ======
+      const ALL_SOUNDS = ['clap', 'beep', 'whistle', 'horn'];
+
       function getSettingsJSON() {
-        return JSON.stringify({ min: minInterval, max: maxInterval, surprise, sound: soundType });
+        return JSON.stringify({ min: minInterval, max: maxInterval, surprise, sounds: selectedSounds });
       }
 
       function applyParsedSettings(s) {
         if (typeof s.min === 'number' && s.min >= 1 && s.min <= 999) minInterval = s.min;
         if (typeof s.max === 'number' && s.max >= 1 && s.max <= 999) maxInterval = s.max;
         if (typeof s.surprise === 'boolean') surprise = s.surprise;
-        if (typeof s.sound === 'string' && ['clap', 'beep', 'whistle', 'horn'].includes(s.sound)) soundType = s.sound;
+        // Support legacy single sound setting
+        if (typeof s.sound === 'string' && ALL_SOUNDS.includes(s.sound)) selectedSounds = [s.sound];
+        // New multi-sound setting
+        if (Array.isArray(s.sounds) && s.sounds.length > 0) {
+          const valid = s.sounds.filter(x => ALL_SOUNDS.includes(x));
+          if (valid.length > 0) selectedSounds = valid;
+        }
       }
 
       async function loadSettings() {
@@ -823,8 +838,9 @@
         if (navigator.vibrate) navigator.vibrate(40);
       }
 
-      function playSound() {
-        switch (soundType) {
+      function playSound(specificSound) {
+        const sound = specificSound || selectedSounds[Math.floor(Math.random() * selectedSounds.length)];
+        switch (sound) {
           case 'beep': beepTone(); break;
           case 'whistle': whistle(); break;
           case 'horn': horn(); break;
@@ -1012,19 +1028,65 @@
 
       // ====== Sound presets ======
       function updateSoundButtons() {
+        const isMulti = selectedSounds.length > 1;
         document.querySelectorAll('#sound-presets .preset').forEach(btn => {
-          btn.classList.toggle('active', btn.dataset.sound === soundType);
+          const isSelected = selectedSounds.includes(btn.dataset.sound);
+          btn.classList.toggle('active', isSelected);
+          btn.classList.toggle('multi', isMulti && isSelected);
         });
       }
 
       document.querySelectorAll('#sound-presets .preset').forEach(btn => {
-        btn.addEventListener('click', () => {
-          soundType = btn.dataset.sound;
-          updateSoundButtons();
-          saveSettings();
-          initAudio();
-          playSound();
+        const sound = btn.dataset.sound;
+        let holdTimer = null;
+        let didLongPress = false;
+        let pressed = false;
+
+        const cleanup = () => {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+          pressed = false;
+        };
+
+        btn.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          if (pressed) return;
+          pressed = true;
+          didLongPress = false;
+          try { btn.setPointerCapture(e.pointerId); } catch (_) { }
+
+          holdTimer = setTimeout(() => {
+            didLongPress = true;
+            initAudio();
+            // Long-press: toggle this sound in multi-select
+            const idx = selectedSounds.indexOf(sound);
+            if (idx >= 0 && selectedSounds.length > 1) {
+              selectedSounds.splice(idx, 1);
+            } else if (idx < 0) {
+              selectedSounds.push(sound);
+            }
+            updateSoundButtons();
+            saveSettings();
+            playSound(sound);
+          }, 400);
         });
+
+        btn.addEventListener('pointerup', () => {
+          if (!pressed) return;
+          const wasTap = !didLongPress;
+          cleanup();
+          if (wasTap) {
+            initAudio();
+            // Tap: single-select this sound
+            selectedSounds = [sound];
+            updateSoundButtons();
+            saveSettings();
+            playSound(sound);
+          }
+        });
+
+        btn.addEventListener('pointercancel', cleanup);
+        btn.addEventListener('lostpointercapture', () => { if (pressed) cleanup(); });
       });
 
       // ====== Keyboard ======
