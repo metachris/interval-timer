@@ -13,13 +13,13 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Reflex Coach">
   <meta property="og:description" content="Random interval timer for reflex and reaction training. Customizable beeps, claps, whistles, and horns at unpredictable intervals.">
-  <meta property="og:image" content="https://metachris.github.io/interval-timer/icon-512.png">
+  <meta property="og:image" content="https://metachris.github.io/reflex-coach/icon-512.png">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Reflex Coach">
   <meta name="twitter:description" content="Random interval timer for reflex and reaction training.">
-  <meta name="twitter:image" content="https://metachris.github.io/interval-timer/icon-512.png">
+  <meta name="twitter:image" content="https://metachris.github.io/reflex-coach/icon-512.png">
 
   <title>Reflex Coach</title>
   <link rel="manifest" href="manifest.webmanifest">
@@ -750,7 +750,7 @@
             const res = await window.storage.get('settings');
             if (res && res.value) applyParsedSettings(JSON.parse(res.value));
           } else {
-            const raw = localStorage.getItem('interval-trainer-settings');
+            const raw = localStorage.getItem('reflex-coach-settings');
             if (raw) applyParsedSettings(JSON.parse(raw));
           }
         } catch (e) {
@@ -766,7 +766,7 @@
         const json = getSettingsJSON();
         try {
           if (window.storage) await window.storage.set('settings', json);
-          else localStorage.setItem('interval-trainer-settings', json);
+          else localStorage.setItem('reflex-coach-settings', json);
         } catch (e) { /* ignore */ }
       }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'interval-trainer-v4';
+const CACHE_NAME = 'reflex-coach-v1';
 const ASSETS = [
   './',
   './index.html',
