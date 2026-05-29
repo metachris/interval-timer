@@ -2,10 +2,12 @@ const CACHE_NAME = 'reflex-coach-v1';
 const ASSETS = [
   './',
   './index.html',
-  './favicon.svg',
-  './icon-192.png',
-  './icon-512.png',
-  './manifest.webmanifest'
+  './manifest.webmanifest',
+  './assets/favicon.svg',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './assets/panthers-logo.png',
+  './assets/kubi.jpeg'
 ];
 
 self.addEventListener('install', e => {

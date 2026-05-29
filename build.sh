@@ -8,7 +8,10 @@ cd "$SCRIPT_DIR"
 mkdir -p panthers
 
 # Copy supporting files
-cp sw.js panthers/
+sed \
+  -e 's|reflex-coach-v|reflex-coach-panthers-v|' \
+  -e 's|kubi\.jpeg|team.jpeg|' \
+  sw.js > panthers/sw.js
 cp -r assets panthers/
 
 # Replace with panthers-specific assets
@@ -16,6 +19,7 @@ cp assets/favicon-panthers.svg panthers/assets/favicon.svg
 cp assets/icon-panthers-192.png panthers/assets/icon-192.png
 cp assets/icon-panthers-512.png panthers/assets/icon-512.png
 cp assets/og-image-panthers.svg panthers/assets/og-image.svg
+cp assets/og-image-panthers.png panthers/assets/og-image.png
 
 # Build modified manifest with correct paths
 sed \
