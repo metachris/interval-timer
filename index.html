@@ -1100,8 +1100,6 @@
       function start() {
         if (!validateRange()) return;
         initAudio();
-        setupMediaSession();
-        startSilentAudio();
         requestWakeLock();
         running = true;
         beepCount = 0;
@@ -1124,7 +1122,6 @@
         clearTimeout(timeoutId);
         cancelAnimationFrame(rafId);
         clearInterval(elapsedTimer);
-        stopSilentAudio();
         releaseWakeLock();
         app.classList.remove('running');
         startBtn.textContent = 'Start';
@@ -1138,56 +1135,6 @@
         if (running) stop();
         else start();
       });
-
-      // ====== Media Session API (AirPods/Bluetooth controls) ======
-      let silentOsc = null;
-      let silentGain = null;
-
-      function setupMediaSession() {
-        if (!('mediaSession' in navigator)) return;
-
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: 'Reflex Coach',
-          artist: 'Training Timer',
-          album: 'Reflex Training'
-        });
-
-        navigator.mediaSession.setActionHandler('play', () => {
-          if (!running) start();
-        });
-
-        navigator.mediaSession.setActionHandler('pause', () => {
-          if (running) stop();
-        });
-      }
-
-      function startSilentAudio() {
-        if (!audioCtx || silentOsc) return;
-        silentOsc = audioCtx.createOscillator();
-        silentGain = audioCtx.createGain();
-        silentGain.gain.value = 0.001;
-        silentOsc.connect(silentGain);
-        silentGain.connect(audioCtx.destination);
-        silentOsc.start();
-        if ('mediaSession' in navigator) {
-          navigator.mediaSession.playbackState = 'playing';
-        }
-      }
-
-      function stopSilentAudio() {
-        if (silentOsc) {
-          silentOsc.stop();
-          silentOsc.disconnect();
-          silentOsc = null;
-        }
-        if (silentGain) {
-          silentGain.disconnect();
-          silentGain = null;
-        }
-        if ('mediaSession' in navigator) {
-          navigator.mediaSession.playbackState = 'paused';
-        }
-      }
 
       // Tap anywhere in the display panel or the image to toggle surprise mode
       const displayEl = document.getElementById('display');
